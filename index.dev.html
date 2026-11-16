@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>VIKTOR LEGEND 2: КАРПАТИ — TABOR SURVIVAL • 16-BIT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=13">
+</head>
+<body>
+<div id="shell">
+  <header id="pagehead">
+    <div class="ph-l">
+      <span class="ph-t1">VIKTOR LEGEND<span class="ph-dot">:</span> КАРПАТИ</span>
+      <span class="ph-t2">TABOR SURVIVAL — ПРОДОВЖЕННЯ «THE LAST SIGNAL»</span>
+    </div>
+    <div class="ph-r">
+      <span class="ph-badge">16-BIT</span>
+      <span class="ph-badge gold">ЧАСТИНА 2</span>
+      <span class="ph-badge">ISOMETRIC</span>
+    </div>
+  </header>
+
+  <div id="console">
+    <div id="console-top">
+      <div class="cbrand">
+        <span class="cb1">IBONARIUM</span>
+        <span class="cb2">16-BIT HOME CONSOLE — MODEL IK-1601</span>
+      </div>
+      <div class="cctl">
+        <button id="btn-power" class="cbtn active" title="Живлення"><i class="led"></i><span>POWER</span></button>
+        <button id="btn-reset" class="cbtn" title="Перезапуск гри"><i class="led"></i><span>RESET</span></button>
+      </div>
+    </div>
+
+    <div id="cartrow">
+      <div id="cart">
+        <div id="cart-label">
+          <span class="cl-top">VIKTOR LEGEND</span>
+          <span class="cl-mid">КАРПАТИ</span>
+          <span class="cl-low">TABOR SURVIVAL</span>
+          <span class="cl-foot">ПРОДОВЖЕННЯ • 24 MEG</span>
+        </div>
+        <div id="cart-slot"></div>
+      </div>
+      <div id="cart-info">
+        <b>КАРТРИДЖ 24 MEG — ЧАСТИНА 2</b>
+        Після останнього сигналу Києва ЛЕГЕНДА зібрав свою п'ятірку — TOXIC, PABLO, DIIN, ROCK — і поїхав у КАРПАТИ починати нове життя. Тут немає заражених. Тут інше: гори й полонини, річка Черемош і Лазурне озеро, три села з крамницями та корчмою, кемпінги, ферма, рибалка, гриби й ягоди, погода від сонця до хуртовини, легенди й артефакти Довбуша — і ГУЛЯНКИ на 8 ігрових годин біля вогнища.
+        <b>Механіки:</b> група з 5 героїв (кожен з талантом), їжа/вода/енергія/настрій — без їжі й води герої сповільняться; збір ресурсів (дерева, ягоди, гриби, трави, риба), крафт і готування (юшка, банош, смажена риба, наливка), будівництво табору (вогнище, намет, колодязь, грядка-ферма, стіл, сушилка), економіка: продавай у крамниці, купуй бринзу й напитки в корчмі, випадкові події (зниклий турист, замерзлий товариш, нічні байки), 7 артефактів Карпат, Мольфар у лісовій хаті, і легендарна механіка «5 Г» — ніч п'яти зірок: кольори плывуть, і у кожного героя СВІЙ тріп.
+        <span class="cart-warn">Керування: WASD/стрілки — рух, SHIFT — біг, E — дія (збір, рибалка, двері, діалоги, плавання), M — багаж і крафт, TAB — карта (клік = маршрут), Q — гулянка. 1-4 — їсти/пити/спати/відпочити • J — журнал • G — група • T — МАНДРІВКИ (сходження на вершини). ESC — пауза. Мобільно: джойстик + кнопки E/RUN/MAP/BAG/ГУЛЯНКА.</span>
+      </div>
+    </div>
+
+    <div id="tv">
+      <div id="crt">
+        <canvas id="game" width="480" height="336"></canvas>
+        <div id="scanlines"></div>
+        <div id="vign"></div>
+        <button id="btn-fs-crt" title="На все вікно (V / подвійний клік)">⛶</button>
+        <div id="dpad"><div id="dpad-stick"><div id="dpad-knob"></div></div></div>
+        <div id="tbtns">
+          <div class="tbn" data-tk="a">E</div>
+          <div class="tbn" data-tk="h">RUN</div>
+          <div class="tbn" data-tk="c">MAP</div>
+          <div class="tbn" data-tk="d">BAG</div>
+          <div class="tbn" data-tk="g">ГРУПА</div>
+          <div class="tbn q" data-tk="q">ГУЛЯНКА</div>
+          <div class="tbn" data-tk="t">ТРЕКИ</div>
+        </div>
+
+        <div id="hud" class="hidden">
+          <div id="hud-tl">
+            <canvas id="face" width="46" height="46"></canvas>
+            <div id="hud-bars">
+              <div class="bname">ЛЕГЕНДА — ЛІДЕР</div>
+              <div class="bar hp"><i id="bar-hp"></i><u>СИЛИ</u></div>
+              <div class="bar-row">
+                <div class="bar mini hu"><i id="bar-hu"></i></div>
+                <div class="bar mini wa"><i id="bar-wa"></i></div>
+                <div class="bar mini mo"><i id="bar-mo"></i></div>
+              </div>
+              <div class="bar-row lbls"><span>ЇЖА</span><span>ВОДА</span><span>НАСТРІЙ</span></div>
+              <div id="hud-team"></div>
+            </div>
+          </div>
+
+          <div id="hud-tr">
+            <div id="hud-day">ДЕНЬ 1 <span id="hud-clock">08:00</span> <span id="hud-wx" class="wxs">СОНЦЕ</span> <b id="hud-money">₴0</b></div>
+            <canvas id="minimap" width="120" height="120"></canvas>
+            <div id="hud-mission">
+              <span class="mflag"></span>
+              <div id="hud-mtitle">...</div>
+            </div>
+            <div id="hud-mob"></div>
+          </div>
+
+          <div id="hud-alert" class="hidden"></div>
+
+          <div id="hotbar">
+            <div class="slot" data-i="0"><b>1</b><span>ЇСТИ</span></div>
+            <div class="slot" data-i="1"><b>2</b><span>ПИТИ</span></div>
+            <div class="slot" data-i="2"><b>3</b><span>СПАТИ</span></div>
+            <div class="slot" data-i="3"><b>4</b><span>ВІДПОЧ.</span></div>
+          </div>
+
+          <div id="prompt" class="hidden"></div>
+          <div id="log"></div>
+          <div id="banner" class="hidden"></div>
+        </div>
+
+        <div id="ui">
+          <div id="boot" class="screen"></div>
+
+          <div id="title" class="screen hidden">
+            <canvas id="logo" width="320" height="150"></canvas>
+            <div id="menu"></div>
+            <div id="title-foot">© 199X IBONARIUM GAMES • КАРПАТИ • 16-BIT ISOMETRIC SURVIVAL</div>
+          </div>
+
+          <div id="dlg" class="screen hidden">
+            <div id="dlg-box">
+              <div id="dlg-name">—</div>
+              <div id="dlg-text">—</div>
+              <div id="dlg-opts"></div>
+            </div>
+          </div>
+
+          <div id="panel" class="screen hidden">
+            <div id="panel-box">
+              <div id="panel-head"><span id="panel-title">—</span><b id="panel-x">ESC — ЗАКРИТИ</b></div>
+              <div id="panel-body"></div>
+            </div>
+          </div>
+
+          <div id="scene" class="screen hidden">
+            <div id="scene-box">
+              <div id="scene-icon">🔥</div>
+              <div id="scene-title">—</div>
+              <div id="scene-text">—</div>
+              <div id="scene-foot">ДАЛІ ▶ (E / клік)</div>
+            </div>
+          </div>
+
+          <div id="fade" class="hidden"></div>
+        </div>
+      </div>
+      <div id="tv-foot">
+        <span>CRT 480×336 • ГРАФІКА: ВЛАСНИЙ 16-BIT ПІКСЕЛЬ-АРТ • ІЗОМЕТРІЯ 2:1 • ЧАСТИНА 2 «КАРПАТИ» v1.3 — ЛЕГЕНДАРНА П'ЯТІРКА</span>
+        <span id="fps">—</span>
+      </div>
+    </div>
+
+    <div id="console-foot">
+      <span>▓ VIKTOR LEGEND 2: КАРПАТИ — ТАБІР • ГУЛЯНКИ • ПОГОДА • АРТЕФАКТИ • 1 PLAYER</span>
+    </div>
+  </div>
+
+  <section id="about">
+    <h3>ПРО ГРУ ТА АСЕТИ</h3>
+    <p><b>VIKTOR LEGEND 2: КАРПАТИ — TABOR SURVIVAL</b> — продовження «IBONARIUM: KYIV — THE LAST SIGNAL». Після подій у місті група ЛЕГЕНДИ виїжджає в Карпати: місто більше не тримає — тримають гори, вогнище і бринза. Відкритий гірський світ: полонини, хребти, Черемош, озеро, три села (Верховинка, Криворівня, Тустань), скелі Довбуша, хребет Піп-Іван і хата Мольфара.</p>
+    <p><b>ГРУПА 5 ГЕРОЇВ (з першої частини):</b> ЛЕГЕНДА (лідер, йде першим), TOXIC (кухар — готування дужче і швидше), PABLO (рибалка — риба клює частіше), DIIN (майстер — будівництво дешевше), ROCK (весельчак — гулянки і «5 Г» частіше). Той самий персонаж, що й у IBONARIUM: KYIV — тільки по кольору різні, імена світяться над головами. Йдуть гуртом, кожного видно на карті групи з його станом.</p>
+    <p><b>ГУЛЯНКА:</b> зберіть всю групу біля вогнища ввечері, запасіть напитки й їжу — і жміть Q. Вісім ігрових годин: тости, пісні, танці, азартні ігри, взаємні розіграші й доручення. Кожна гулянка унікальна — сцени пишуться в ЖУРНАЛ. Вранці — похмілля до полудня: вода, їжа або розсіл лікують.</p>
+    <p><b>МАНДРІВКИ (T / кнопка ТРЕКИ):</b> реальні маршрути Карпат — ГОВЕРЛА (2061 м), ПЕТРОС (2020 м), ПІП-ІВАН (2028 м, руїни «Білий Слон»), МАРМАРОСЬКІ АЛЬПИ, озера НЕСАМОВИТЕ, ЯЙКО ІЛЕМЕНСЬКЕ, СИНЕВИР, кордон РУМУНІЇ (Ділове) і МОЛДОВИ (Красноільськ) — та авто-експедиція на ШАЦЬКІ ОЗЕРА (Світязь). Сходження — окремий режим: стадії від стежки до сніжників, висота, витрати сил і погода на схилі. На кожній вершині група робить ФІО.</p>
+  <p><b>ФОТОАЛЬБОМ:</b> полароїди зберігаються у грі (панель МАНДРІВКИ → «Відкрити ФОТОАЛЬБОМ» або з квесту ФОТОЛЕТОПИС КАРПАТ). Фото-точки: вершини, озера, кордони, скелі Довбуша, обсерваторія. Редактор «Карпатського Тижня» платить ₴20 за кадр з вершини.</p>
+  <p><b>СЕЛА ЗСЕРЕДИНИНІ:</b> у кожну хату, церкву, крамницю, корчму, ковальню й садибу можна ЗАЙТИ (E на дверях): піч гріє, стіл годує, свічки — молебень, прилавок — торг. На дорогах ходять авто, у «Старому Вогнищі» стоїть білий ван групи (БІП-БІП!).</p>
+  <p><b>«5 Г» — НІЧ П'ЯТИ ЗІРОК:</b> знайди таємний гриб (рідкі грибні галявини і нагорода Мольфара). Використай у таборі ввечері зі всією групою: шість годин плівки кольорів і галюцинацій — у КОЖНОГО героя свій тріп: Лєгенда бачить золотого Легеня, TOXIC — небесний банош, PABLO — співочих риб, DIIN — геометрію шляхів до артефактів, ROCK — тіні, що сміються. Після — «бачення»: на цілий день усі артефакти світяться на карті.</p>
+    <p><b>ПОГОДА:</b> сонце / хмарність / вітер / туман / дощ / град / сніг / ХУРТОВИНА. Хуртовина закриває світ — або сиди біля вогню, або замерзнеш. Ніч холодна: без вогню герої замерзають. Вдень у спеку можна плавати в озері і засмагати на травах.</p>
+    <p><b>ГРАФІКА:</b> власний 16-bit піксель-арт студії IBONARIUM • вся графіка намальована кодом • ізометрія 2:1 • карпатська палітра. Гра працює офлайн.</p>
+    <p><b>АВТОР ГРУ:</b> IBONARIUM GAMEWORKS<br><b>ДАТА РЕЛІЗУ:</b> 17.11.2026 • ВЕРСІЯ v1.3 «ЛЕГЕНДАРНА П'ЯТІРКА» (один файл) • МОДЕРАЦІЯ: M — MATURE 17+ (гулянки і «5 Г»)</p>
+  </section>
+</div>
+<script src="js/palette.js?v=13"></script>
+<script src="js/audio.js?v=13"></script>
+<script src="js/v5assets.js?v=13"></script>
+<script src="js/sprites.js?v=13"></script>
+<script src="js/world.js?v=13"></script>
+<script src="js/ents.js?v=13"></script>
+<script src="js/sys.js?v=13"></script>
+<script src="js/gfx.js?v=13"></script>
+<script src="js/main.js?v=13"></script>
+</body>
+</html>
