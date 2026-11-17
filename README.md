@@ -30,4 +30,4 @@
 
 
 ---
-© IBONARIUM GAMEWORKS • Київ • 17.11.2026 • v1.3 «ЛЕГЕНДАРНА П'ЯТІРКА»
+© IBONARIUM GAMEWORKS • Київ • 17.11.2026 • v1.3 LAVANDA AUDIT IBONARIUM COSMO DYNAMICS LAB LIVE «ЛЕГЕНДАРНА П'ЯТІРКА»
