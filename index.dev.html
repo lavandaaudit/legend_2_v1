@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=13">
+<link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
 <div id="shell">
@@ -119,8 +119,9 @@
             <div id="title-foot">© 199X IBONARIUM GAMES • КАРПАТИ • 16-BIT ISOMETRIC SURVIVAL</div>
           </div>
 
-          <div id="dlg" class="screen hidden">
+                  <div id="dlg" class="screen hidden">
             <div id="dlg-box">
+              <button id="dlg-x" title="Закрити (ESC)">✖</button>
               <div id="dlg-name">—</div>
               <div id="dlg-text">—</div>
               <div id="dlg-opts"></div>
@@ -129,7 +130,7 @@
 
           <div id="panel" class="screen hidden">
             <div id="panel-box">
-              <div id="panel-head"><span id="panel-title">—</span><b id="panel-x">ESC — ЗАКРИТИ</b></div>
+              <div id="panel-head"><span id="panel-title">—</span><button id="panel-x" title="Закрити (ESC)">✖ ЗАКРИТИ</button></div>
               <div id="panel-body"></div>
             </div>
           </div>
@@ -144,10 +145,12 @@
           </div>
 
           <div id="fade" class="hidden"></div>
+          <button id="climb-abort" class="hidden" title="Повернутись з маршруту">✖ ЗІЙТИ З МАРШРУТУ</button>
+          <button id="int-exit" class="hidden" title="Вийти з приміщення (ESC)">✖ ВИХІД</button>
         </div>
       </div>
       <div id="tv-foot">
-        <span>CRT 480×336 • ГРАФІКА: ВЛАСНИЙ 16-BIT ПІКСЕЛЬ-АРТ • ІЗОМЕТРІЯ 2:1 • ЧАСТИНА 2 «КАРПАТИ» v1.3 — ЛЕГЕНДАРНА П'ЯТІРКА</span>
+        <span>CRT 480×336 • ГРАФІКА: ВЛАСНИЙ 16-BIT ПІКСЕЛЬ-АРТ • ІЗОМЕТРІЯ 2:1 • ЧАСТИНА 2 «КАРПАТИ» v1.4 — ВЕРШИННИЙ КАДР</span>
         <span id="fps">—</span>
       </div>
     </div>
@@ -168,17 +171,17 @@
   <p><b>«5 Г» — НІЧ П'ЯТИ ЗІРОК:</b> знайди таємний гриб (рідкі грибні галявини і нагорода Мольфара). Використай у таборі ввечері зі всією групою: шість годин плівки кольорів і галюцинацій — у КОЖНОГО героя свій тріп: Лєгенда бачить золотого Легеня, TOXIC — небесний банош, PABLO — співочих риб, DIIN — геометрію шляхів до артефактів, ROCK — тіні, що сміються. Після — «бачення»: на цілий день усі артефакти світяться на карті.</p>
     <p><b>ПОГОДА:</b> сонце / хмарність / вітер / туман / дощ / град / сніг / ХУРТОВИНА. Хуртовина закриває світ — або сиди біля вогню, або замерзнеш. Ніч холодна: без вогню герої замерзають. Вдень у спеку можна плавати в озері і засмагати на травах.</p>
     <p><b>ГРАФІКА:</b> власний 16-bit піксель-арт студії IBONARIUM • вся графіка намальована кодом • ізометрія 2:1 • карпатська палітра. Гра працює офлайн.</p>
-    <p><b>АВТОР ГРУ:</b> IBONARIUM GAMEWORKS<br><b>ДАТА РЕЛІЗУ:</b> 17.11.2026 • ВЕРСІЯ v1.3 «ЛЕГЕНДАРНА П'ЯТІРКА» (один файл) • МОДЕРАЦІЯ: M — MATURE 17+ (гулянки і «5 Г»)</p>
+    <p><b>АВТОР ГРУ:</b> IBONARIUM GAMEWORKS<br><b>ДАТА РЕЛІЗУ:</b> 17.11.2026 • ВЕРСІЯ v1.4 «ВЕРШИННИЙ КАДР» (один файл) • МОДЕРАЦІЯ: M — MATURE 17+ (гулянки і «5 Г»)</p>
   </section>
 </div>
-<script src="js/palette.js?v=13"></script>
-<script src="js/audio.js?v=13"></script>
-<script src="js/v5assets.js?v=13"></script>
-<script src="js/sprites.js?v=13"></script>
-<script src="js/world.js?v=13"></script>
-<script src="js/ents.js?v=13"></script>
-<script src="js/sys.js?v=13"></script>
-<script src="js/gfx.js?v=13"></script>
-<script src="js/main.js?v=13"></script>
+<script src="js/palette.js?v=14"></script>
+<script src="js/audio.js?v=14"></script>
+<script src="js/v5assets.js?v=14"></script>
+<script src="js/sprites.js?v=14"></script>
+<script src="js/world.js?v=14"></script>
+<script src="js/ents.js?v=14"></script>
+<script src="js/sys.js?v=14"></script>
+<script src="js/gfx.js?v=14"></script>
+<script src="js/main.js?v=14"></script>
 </body>
 </html>

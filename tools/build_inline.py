@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Перезбірка одиночного index.html: style.css + 9 js-модулів → один файл.
-Запуск з кореня репозиторія:  python3 tools/build_inline.py
-Результат заміщує index.html — саме він і публікується на GitHub Pages."""
-import re, pathlib
+"""Перезбірка одиночного index.html зі style.css + js/ (з кореня репозиторія):
+Result works from any preview (single-file), file:// and GitHub Pages.
+v1.3: читає dev-джерело index.dev.html (9 модулів), пишє index.html."""
+import re, sys, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 html = (ROOT / 'index.dev.html').read_text(encoding='utf-8')
@@ -14,7 +14,7 @@ html2 = re.sub(r'<link rel="stylesheet" href="style\.css[^"]*">',
                lambda m: '<style>\n' + css + '\n</style>', html, count=1)
 assert html2 != html, 'style link not replaced'
 
-# 2) inline scripts у вихідному порядку
+# 2) inline scripts in original order
 def repl(m):
     src = m.group(1).split('?')[0]
     code = (ROOT / src).read_text(encoding='utf-8')

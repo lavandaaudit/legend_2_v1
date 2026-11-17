@@ -37,21 +37,25 @@ const VILLAGES=[
     {dx:19,dy:8,w:4,d:4,type:'house'},
     {dx:4,dy:10,w:4,d:4,type:'house'},
     {dx:10,dy:10,w:4,d:3,type:'chapel',label:'КАПЛИЦЯ'},
+    {dx:21,dy:12,w:2,d:2,type:'hut',label:'КУРІНЬ ТКАЧКИ'},
    ]},
   {id:'verh',name:'ВЕРХОВИНКА',x:54,y:148,w:26,h:18,
    houses:[
     {dx:3,dy:2,w:5,d:4,type:'shop',label:'КРАМНИЦЯ'},
     {dx:11,dy:2,w:6,d:5,type:'bar',label:'КОРЧМА «ВЕСЕЛИЙ ГУЦУЛ»'},
-    {dx:20,dy:2,w:5,d:4,type:'farm',label:'САДИБА'},
+    {dx:20,dy:2,w:5,d:4,type:'farm',label:'САДИБА',img:'vill1'},
     {dx:4,dy:11,w:4,d:4,type:'house'},
     {dx:11,dy:11,w:4,d:4,type:'house'},
     {dx:17,dy:11,w:4,d:4,type:'barn',label:'СТАЙНЯ'},
+    {dx:23,dy:13,w:2,d:2,type:'hut',label:'КУРІНЬ ПАСІЧНИКА'},
    ]},
   {id:'krivo',name:'КРИВОРІВНЯ',x:148,y:172,w:24,h:16,
    houses:[
     {dx:3,dy:2,w:5,d:4,type:'shop',label:'КРАМНИЦЯ МАЛА'},
+    {dx:9,dy:2,w:2,d:2,type:'kiosk',label:'СІЛЬЛАРЬОК'},
     {dx:12,dy:2,w:5,d:4,type:'forge',label:'КОВАЛЬНЯ'},
     {dx:4,dy:10,w:4,d:4,type:'house'},
+    {dx:9,dy:13,w:2,d:2,type:'hut',label:'КУРІНЬ ДІДА'},
     {dx:12,dy:10,w:4,d:4,type:'house'},
     {dx:18,dy:10,w:4,d:4,type:'house'},
    ]},
@@ -80,19 +84,23 @@ VILLAGES.push(
     {dx:5,dy:9,w:5,d:5,type:'church',label:'ЦЕРКВА РІЗДВА'},
     {dx:13,dy:9,w:4,d:4,type:'house'},
     {dx:17,dy:3,w:4,d:4,type:'house'},
+    {dx:2,dy:9,w:2,d:2,type:'hut',label:'ПЛЕСНЯНИЦЯ'},
+    {dx:19,dy:10,w:2,d:2,type:'hut',label:'КУРІНЬ'},
    ]},
  {id:'byst',name:'БИСТРИЦЯ',x:12,y:94,w:20,h:14,
    houses:[
-    {dx:3,dy:2,w:5,d:4,type:'shop',label:'КРАМНИЦЯ ЛІСНИЦТВА'},
+    {dx:3,dy:2,w:5,d:4,type:'shop',label:'ЛІСНИЦТВО',img:'admin3'},
     {dx:11,dy:2,w:5,d:5,type:'church',label:'ЦЕРКВА СВ. МИКОЛИ'},
     {dx:4,dy:10,w:4,d:3,type:'house'},
     {dx:13,dy:10,w:4,d:3,type:'house'},
+    {dx:17,dy:2,w:2,d:2,type:'hut',label:'ХАТКА ЛІСНИКА'},
    ]},
  {id:'dilove',name:'ДІЛОВЕ',x:196,y:198,w:18,h:12,
    houses:[
     {dx:2,dy:2,w:5,d:4,type:'shop',label:'КРАМНИЦЯ «ТІРЛИК»'},
-    {dx:9,dy:2,w:5,d:4,type:'bar',label:'КОРЧМА «ТРИ МОСТИ»'},
+    {dx:9,dy:2,w:5,d:4,type:'bar',label:'КОРЧМА «ТРИ МОСТИ»',img:'vill1'},
     {dx:3,dy:8,w:4,d:3,type:'house'},
+    {dx:8,dy:8,w:2,d:2,type:'house',label:'СІЛЬРАДА',img:'khrus'},
     {dx:12,dy:8,w:5,d:3,type:'border',label:'КПП ДІЛОВЕ — РУМУНІЯ'},
    ]}
 );
@@ -115,7 +123,7 @@ VILLAGES.push(
  {id:'huttysa',name:'ХУТІР НА ТИСІ',x:208,y:170,w:7,h:6,
    houses:[
     {dx:2,dy:1,w:4,d:3,type:'house'},
-    {dx:4,dy:4,w:3,d:2,type:'house'}
+    {dx:0,dy:4,w:2,d:2,type:'hut',label:'КУРІНЬ'}
    ]}
 );
 /* v1.2 — КЕМПІНГИ-БАЗИ ВЕРШИН */
@@ -234,6 +242,7 @@ function buildVillages(elev,terr){
       const hx=v.x+hs.dx,hy=v.y+hs.dy;
       for(let y=hy;y<hy+hs.d;y++)for(let x=hx;x<hx+hs.w;x++)terr[y*W+x]=10; /* 10 — забудова */
       const b={x:hx,y:hy,w:hs.w,h:hs.d,type:hs.type,label:hs.label||'',village:v.id,name:hs.label||'ХАТА',
+        img:hs.img||null,
         door:{x:hx+(hs.w>>1),y:hy+hs.d},vx:v.x,vy:v.y};
       /* двері на південній стіні, перед ними — вільна плитка */
       WA.buildings.push(b);
@@ -292,7 +301,8 @@ function scatter(elev,terr){
     if(inCamp||inVill)continue;
     if(t===3){
       /* v1.3: ГУСТИЙ РІЗНОВИСОКИЙ ЛІС — ялинка/смерека/мішані широкі/берези */
-      if(h<0.30)P.push({x,y,type:'spruce',seed:IB.hsh(x,y,8)});
+      if(h<0.28)P.push({x,y,type:'spruce',seed:IB.hsh(x,y,8)});
+      else if(h<0.30)P.push({x,y,type:'deadtree',seed:IB.hsh(x,y,8)});   /* v1.4: сухостій */
       else if(h<0.38)P.push({x,y,type:'spruce2',seed:IB.hsh(x,y,8)});
       else if(h<0.47)P.push({x,y,type:'spruce3',seed:IB.hsh(x,y,8)});
       else if(h<0.56)P.push({x,y,type:'oak',seed:IB.hsh(x,y,8)});
@@ -329,6 +339,21 @@ function scatter(elev,terr){
           P.push({x:lx,y:ly,type:'lamp',seed:IB.hsh(lx,ly,88)});
       }
     }
+    /* v1.4 — РЕКВІЗИТ СІЛ: зупинки, лавки, бочки, ящики, майданчик (PNG з першої частини) */
+    const put=(px,py,tp)=>{if(px===undefined)return;
+      if(px<1||py<1||px>=W-1||py>=H-1)return;
+      const ti=py*W+px;
+      if(terr[ti]===0||terr[ti]===9||terr[ti]===10||terr[ti]===8||WA.grid.has(ti))return;
+      P.push({x:px,y:py,type:tp,seed:IB.hsh(px,py,91)});};
+    put(v.x-1,my,'busstop');                        /* зупинка біля в'їзду */
+    put(v.x+v.w,my+2,'busstop');
+    for(const hs of v.houses){
+      const hx=v.x+hs.dx,hy=v.y+hs.dy;
+      if(hs.type==='bar'){put(hx-1,hy+hs.d+1,'barrels');put(hx+hs.w+1,hy+hs.d-1,'bench');}
+      if(hs.type==='shop'||hs.type==='kiosk'){put(hx+hs.w+1,hy+hs.d,'crate');put(hx-1,hy+hs.d,'bench');}
+      if(hs.type==='church'){put(hx-1,hy+hs.d,'bench');put(hx+hs.w+1,hy+hs.d,'bench');}
+      if(hs.type==='forge'){put(hx-1,hy+hs.d,'barrels');}
+    }
     for(const hs of v.houses){
       if(hs.type!=='farm'&&hs.type!=='barn')continue;
       const hx=v.x+hs.dx,hy=v.y+hs.dy;
@@ -340,6 +365,19 @@ function scatter(elev,terr){
           P.push({x:fx,y:fy,type:'fence',seed:IB.hsh(fx,fy,89)});
       }
     }
+  }
+  /* дитячі майданчики — Верховинка і Тустань */
+  {
+    const putv=(px,py,tp)=>{
+      if(px<1||py<1||px>=W-1||py>=H-1)return;
+      const ti=py*W+px;
+      if(terr[ti]===0||terr[ti]===9||terr[ti]===10||terr[ti]===8||WA.grid.has(ti))return;
+      P.push({x:px,y:py,type:tp,seed:IB.hsh(px,py,92)});
+    };
+    const pv=VILLAGES.find(v=>v.id==='verh');
+    if(pv){putv(pv.x+22,pv.y+16,'swing');putv(pv.x+24,pv.y+16,'slide');}
+    const pt=VILLAGES.find(v=>v.id==='tustan');
+    if(pt){putv(pt.x+21,pt.y+15,'swing');putv(pt.x+15,pt.y+14,'slide');}
   }
   /* ЛІС МОЛИ — гущавина навколо хати Мольфара */
   for(let y=MOLFAR.y-14;y<=MOLFAR.y+14;y++)for(let x=MOLFAR.x-14;x<=MOLFAR.x+14;x++){
@@ -370,6 +408,13 @@ function buildExtra(){
   WA.buildings.push({x:OBS.x-2,y:OBS.y-2,w:6,h:4,type:'ruin',label:'РУЇНИ ОБСЕРВАТОРІЇ',name:'РУЇНИ ОБСЕРВАТОРІЇ',village:null,door:{x:OBS.x+1,y:OBS.y+2}});
   /* колодязі в селах */
   for(const v of VILLAGES)WA.buildings.push({x:v.x+(v.w>>1)-1,y:v.y+(v.h>>1)-2,w:2,h:2,type:'well',label:'КОЛОДЯЗЬ',name:'КОЛОДЯЗЬ',village:v.id,door:{x:v.x+(v.w>>1),y:v.y+(v.h>>1)}});
+  /* v1.4: КОЛИБИ НА ПОЛОНИНАХ — курінь біля гірських баз (заходити можна) */
+  for(const cb of [
+    {x:87,y:53,label:'КОЛИБА ПОЛОНИНИ ВІТРІВ'},
+    {x:55,y:53,label:'МИСЛИВСЬКИЙ КУРІНЬ'},
+    {x:197,y:185,label:'КОЛИБА МАРМАРОС'},
+  ])WA.buildings.push({x:cb.x,y:cb.y,w:2,h:2,type:'hut',label:cb.label,name:cb.label,village:null,
+    door:{x:cb.x+1,y:cb.y+2}});
 }
 function computeBlock(){
   for(const b of WA.buildings){

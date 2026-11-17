@@ -82,6 +82,13 @@ IB.nightFactor=function(t){
   if(h<21)return (h-18.5)/2.5;
   return 1;
 };
+/* v1.4: ЗОЛОТА ГОДИНА — 0..1, пік о 6:25 ранку і 19:45 вечора (тепле світло) */
+IB.goldenHour=function(t){
+  const h=(t===undefined?IB.G.t:t)%24;
+  const m=IB.M.max(0,1-Math.abs(h-6.25)/1.15);
+  const e=IB.M.max(0,1-Math.abs(h-19.75)/1.6);
+  return IB.M.max(m,e);
+};
 IB.clockStr=function(t){
   const h=(t===undefined?IB.G.t:t)%24;
   const hh=IB.M.floor(h),mm=IB.M.floor((h-hh)*60);

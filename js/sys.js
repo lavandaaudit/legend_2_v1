@@ -16,7 +16,7 @@ IB.G={mode:'boot',t:8,day:1,money:25,
        bread:1,brinza:0,canned:0,eggs:0,yushka:0,banosh:0,kulesh:0,cookfish:0,
        nalyva:0,beer:1,wine:0,vodka:0,rozsol:0,kava:0,trip5:0},
   quests:{done:[],active:'q1',side:{}},
-  arts:[],journal:[],album:[],
+  arts:[],journal:[],album:[],stamps:{},   /* v1.4: штампи маршрутів {routeId:{d,name}} */
   camps:{},   /* c1..c5 → {fire,fuel,tent,well,farm:{built,stage,planted,ready},table,dry} */
   party:{active:false,t:0,hour:0,scenes:0,at:null},
   trip:{active:false,t:0,hour:0,at:null},
@@ -403,6 +403,9 @@ IB.QUESTS=[
   {id:'q13',t:'ФОТОЛЕТОПИС КАРПАТ',d:'Сфотографуй групу на ТРЬОХ вершинах: Говерла, Петрос, Піп-Іван (мандрівки — T / кнопка ТРЕКИ, або E на вершині).',
    chk:()=>{let n=0;for(const p of IB.G.album){if(p.kind==='peak')n++;}return n>=3;},
    loc:()=>IB.W.CAMPS[5]||IB.W.CAMPS[0]},
+  {id:'q14',t:'ШТАМП-КОЛЕКЦІОНЕР',d:'Пройди ШЕСТЬ маршрутів у МАНДРІВКАХ (T): на великій карті (TAB) за кожен маршрут — туристичний штамп «Карпати-Тур». Колекція видно усім.',
+   chk:()=>{let n=0;for(const k in (IB.G.stamps||{}))n++;return n>=6;},
+   loc:()=>IB.W.CAMPS[0]},
 ];
 IB.SYS_Q=IB.QUESTS;
 IB.questCheck=()=>{
@@ -649,6 +652,7 @@ IB.saveGame=()=>{
     const data={v:1,day:IB.G.day,t:IB.G.t,money:IB.G.money,inv:IB.G.inv,quests:IB.G.quests,arts:IB.G.arts,
       camps:IB.G.camps,journal:IB.G.journal.slice(0,40),flags:IB.G.flags,stats:IB.G.stats,
       wx:IB.G.wx,hangover:IB.G.hangover,vision:IB.G.vision,axetier:IB.G.axetier,album:IB.G.album,team,
+      stamps:IB.G.stamps||{},
       spawn:{x:IB.E.team[0].x,y:IB.E.team[0].y},touristDone:IB.G.touristDone};
     localStorage.setItem('vlegend_karpaty',JSON.stringify(data));
     IB.toast('ГРУ ЗБЕРЕЖЕНО','gold');
@@ -661,7 +665,7 @@ IB.loadGame=()=>{
     const d=JSON.parse(raw);
     Object.assign(IB.G,{day:d.day,t:d.t,money:d.money,inv:d.inv,quests:d.quests,arts:d.arts,camps:d.camps,
       journal:d.journal||[],flags:d.flags,stats:d.stats,wx:d.wx,album:d.album||[],hangover:d.hangover||0,vision:d.vision||0,
-      axetier:d.axetier||1,touristDone:d.touristDone||false});
+      axetier:d.axetier||1,touristDone:d.touristDone||false,stamps:d.stamps||{}});
     IB.spawnTeam(d.spawn.x,d.spawn.y);
     for(const s of d.team||[]){const h=IB.E.team.find(x=>x.id===s.id);if(h){h.x=s.x;h.y=s.y;h.hp=s.hp;h.food=s.food;h.water=s.water;h.mood=s.mood;h.alc=s.alc;}}
     IB.spawnVillagers();IB.spawnAnimals();IB.spawnFishes();

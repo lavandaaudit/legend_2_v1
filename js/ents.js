@@ -149,7 +149,7 @@ function walkable(x,y){
   if(t===0)return false;
   if(IB.W.block[(y|0)*IB.W.W+(x|0)])return false;
   const p=IB.W.propAt(x,y);
-  if(p&&(p.type==='spruce'||p.type==='spruce2'||p.type==='spruce3'||p.type==='birch'||p.type==='pine'||p.type==='oak'||p.type==='tree2'||p.type==='tower'||p.type==='rock'||p.type==='mrock'))return false;
+  if(p&&(p.type==='spruce'||p.type==='spruce2'||p.type==='spruce3'||p.type==='birch'||p.type==='pine'||p.type==='oak'||p.type==='tree2'||p.type==='tower'||p.type==='rock'||p.type==='mrock'||p.type==='deadtree'||p.type==='bench'||p.type==='barrels'||p.type==='crate'||p.type==='busstop'||p.type==='swing'||p.type==='slide'))return false;
   return true;
 }
 IB.walkable=walkable;

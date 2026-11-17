@@ -505,7 +505,7 @@ IB.MAIN=(function(){
     ['beer','Пиво',7],['wine','Вино',12],['vodka','Горілка',15],['nalyva','Наливка',10],['rozsol','Розсіл',6],['kava','Кава',10]];
   const SHOP_SELL=[['berries','Ягоди',3],['mush','Гриби',6],['herb','Трави',4],['fishraw','Риба (сира)',7],['potato','Картопля',2]];
   function openBuilding(b){
-    if(['house','church','shop','bar','forge','farm','border'].indexOf(b.type)>=0){
+    if(['house','church','shop','bar','forge','farm','border','hut','kiosk'].indexOf(b.type)>=0){
       return enterInterior(b);
     }
     if(b.type==='house'){
@@ -750,7 +750,7 @@ IB.MAIN=(function(){
     });
     IB._dlgOpts=opts;
   }
-  function closeDlg(){IB.$('dlg').classList.add('hidden');mode=IB._inInterior?'interior':'game';IB._dlgOpts=null;}
+  function closeDlg(){IB.$('dlg').classList.add('hidden');mode=(IB._inInterior&&IB.INT_CUR)?'interior':'game';IB._dlgOpts=null;}
   function dlgKey(){
     const n=(IB._dlgOpts||[]).length;
     for(let i=0;i<n;i++)if(consume(''+(i+1))){IB._dlgOpts[i].f();return;}
@@ -773,7 +773,15 @@ IB.MAIN=(function(){
     IB.$('panel-body').innerHTML=html;
     IB.$('panel-body').scrollTop=0;
   }
-  function closePanel(){IB.$('panel').classList.add('hidden');mode=IB._inInterior?'interior':'game';IB._panelKey=null;}
+  /* v1.4: закриття ПОВЕРХ усього — з будь-якого режиму (хрестик, ESC, клік поза панеллю) */
+  function closePanel(){IB.$('panel').classList.add('hidden');mode=(IB._inInterior&&IB.INT_CUR)?'interior':'game';IB._panelKey=null;}
+  IB.PANEL_CLOSE=()=>{
+    IB.$('panel').classList.add('hidden');
+    IB.$('dlg').classList.add('hidden');IB._dlgOpts=null;
+    mode=(IB._inInterior&&IB.INT_CUR)?'interior':'game';
+    IB._panelKey=null;
+    IB.SFX.ui&&IB.SFX.ui();
+  };
   function panelList(opts){
     let html='';
     opts.forEach((o,i)=>{
@@ -890,8 +898,13 @@ IB.MAIN=(function(){
     h+='<div class="map-it" data-x="112" data-y="148"><b>СКЕЛІ ДОВБУША</b><small>артефакт</small></div>';
     h+='<div class="map-it" data-x="96" data-y="74"><b>ХАТА МОЛЬФАРА</b><small>Ліс Моли</small></div>';
     h+='<div class="map-it" data-trav="1"><b>МАНДРІВКИ — ВСІ МАРШРУТИ</b><small>вершини, озера, кордони, Шацькі озера (клавіша T)</small></div>';
+    /* v1.4: колекція штампів на карті */
+    const nst=Object.keys(IB.G.stamps||{}).length;
+    h+='<div class="map-it" data-stamps="1"><b>ШТАМПИ: '+nst+'/'+IB.W.ROUTES.length+' ✉</b><small>пройдені маршрути «Карпати-Тур»</small></div>';
     side.innerHTML=h;
-    const setRoute=(x,y)=>{IB.G.route={x,y};IB.toast('Маршрут прокладено — стрілка веде','gold');IB.SFX.ui();};
+    const stm=side.querySelector('.map-it[data-stamps]');
+    if(stm)stm.onclick=()=>openTravels();
+    const setRoute=(x,y)=>{if(!(x>=0)||!(y>=0))return;IB.G.route={x,y};IB.toast('Маршрут прокладено — стрілка веде','gold');IB.SFX.ui();};
     side.querySelectorAll('.map-it').forEach(el=>{el.onclick=()=>setRoute(+el.dataset.x,+el.dataset.y);});
     const trv=side.querySelector('.map-it[data-trav]');
     if(trv)trv.onclick=()=>openTravels();
@@ -947,6 +960,11 @@ IB.MAIN=(function(){
       clearP();return;
     }
     if(mode==='dialog'){dlgKey();clearP();return;}
+    if(mode==='summit'){
+      /* v1.4: кіно-момент — будь-яка клавіша завершує */
+      if(consume('e')||consume('enter')||consume('space')||consume('esc'))IB.SUMMIT_END();
+      clearP();return;
+    }
     if(mode==='panel'||mode==='map'){
       if(consume('esc')||consume('tab')||consume('m'))closePanel();
       clearP();return;
@@ -1011,7 +1029,12 @@ IB.MAIN=(function(){
     /* оновлення світу */
     if(IB.G.mode==='game'){
       handleKeys(dt);
-      if(mode==='climb'||mode==='interior'){
+      if(mode==='summit'){
+        /* кіно-момент: світ завмер, панорама грає; автозавершення */
+        IB.SUMMIT.t+=dt;
+        if(IB.SUMMIT.t>3.6)IB.SUMMIT_END();
+      }
+      else if(mode==='climb'||mode==='interior'){
         /* світ на паузі: час іде кроками сходження, у інтер'єрі — живий рух */
         if(mode==='interior'&&IB._intMove)IB._intMove(dt);
       }else{
@@ -1031,6 +1054,7 @@ IB.MAIN=(function(){
       }
     }
     if(mode==='climb')IB.drawAscent(g,dt);
+    else if(mode==='summit')IB.drawSummit(g,dt);
     else if(mode==='interior')IB.drawInterior(g,dt);
     else IB.renderWorld(g,dt);
     /* fps */
@@ -1048,6 +1072,22 @@ IB.MAIN=(function(){
     if(fs)fs.onclick=toggleFullscreen;
     cv.addEventListener('dblclick',toggleFullscreen);
     IB.$('scene').addEventListener('click',()=>IB.closeScene());
+    /* v1.4: ХРЕСТИКИ І КНОПКИ ЗАКРИТТЯ — працюють мишкою і тапом на мобільному */
+    const px2=IB.$('panel-x');
+    if(px2)px2.addEventListener('click',ev=>{ev.stopPropagation();IB.PANEL_CLOSE();});
+    const dx2=IB.$('dlg-x');
+    if(dx2)dx2.addEventListener('click',ev=>{ev.stopPropagation();closeDlg();IB.SFX.ui();});
+    const pnl=IB.$('panel');
+    if(pnl)pnl.addEventListener('pointerdown',ev=>{if(ev.target===pnl)IB.PANEL_CLOSE();});
+    const ca=IB.$('climb-abort');
+    if(ca)ca.addEventListener('click',()=>{if(mode==='climb')IB.TRAVEL_ABORT();});
+    const ie=IB.$('int-exit');
+    if(ie)ie.addEventListener('click',()=>{if(mode==='interior')exitInterior();});
+    /* v1.4: клік по канвасу — крок сходження / завершення кіно-моменту */
+    cv.addEventListener('pointerdown',()=>{
+      if(mode==='climb')climbStep();
+      else if(mode==='summit')IB.SUMMIT_END();
+    });
     /* журнал — клік по панелі квесту в HUD */
     const hm=IB.$('hud-mission');
     if(hm){hm.style.pointerEvents='auto';hm.style.cursor='pointer';hm.title='ЖУРНАЛ (J)';
@@ -1079,8 +1119,11 @@ IB.MAIN=(function(){
     let h='<div class="pcard"><div class="ds">КУРТОЧНИЙ ВІДДІЛ «КАРПАТИ-ТУР»: реальні маршрути — Чорногора, Ґорґани, Мармароси, кордони і Шацькі озера. На кожній вершині група робить ФІО — полароїди летять у альбом.</div></div>';
     rs.forEach((r,i)=>{
       const c=IB.canTravel(r);
-      h+='<div class="prow click" data-rv="'+i+'"><span class="nm">'+r.name+'</span><span class="ds">'+r.from+' • '+r.hours+' год • '+r.diff+'</span><span class="'+(c.ok?'ok':'no')+'">'+(c.ok?'ЙТИ ▶':'✖ '+c.why)+'</span></div>';
+      const st=(IB.G.stamps||{})[r.id];
+      h+='<div class="prow click" data-rv="'+i+'"><span class="nm">'+(st?'✉ ':'')+r.name+'</span><span class="ds">'+r.from+' • '+r.hours+' год • '+r.diff+'</span><span class="'+(st?'ok':(c.ok?'ok':'no'))+'">'+(st?('ШТАМП Д'+st.d):(c.ok?'ЙТИ ▶':'✖ '+c.why))+'</span></div>';
     });
+    const nst=Object.keys(IB.G.stamps||{}).length;
+    h+='<div class="prow head"><span class="nm">ШТАМПИ: '+nst+'/'+rs.length+' ✉</span><span class="ds">колекція на великій карті (TAB)</span><span class="ok">✉</span></div>';
     h+='<div class="prow head"><span class="nm">ФОТОАЛЬБОМ</span><span class="ds">кадрів: '+(IB.G.album?IB.G.album.length:0)+'</span><span class="ok">📷</span></div>';
     h+='<div class="prow click" data-alb="1"><span class="nm">Відкрити ФОТОАЛЬБОМ</span><span class="ds">полароїди групи</span><span class="ok">📷</span></div>';
     openPanel('МАНДРІВКИ ТА ВЕРШИНИ КАРПАТ',h);
@@ -1112,15 +1155,47 @@ IB.MAIN=(function(){
       IB.journalAdd('🚐','Автостопом до «'+r.name+'» — '+(r.hours)+' год дороги. Трясло, але весело.');
       for(const h of IB.E.team)h.mood=IB.clamp(h.mood+4,0,100);
       IB.SFX.coin();
+      addStamp(r);
       IB.saveGame();
       return;
     }
     IB.TRAVEL_CUR={route:r,prog:0};
     IB.$('hud').classList.add('hidden');
+    IB.$('climb-abort').classList.remove('hidden');
     mode='climb';
     IB.banner('МАРШРУТ: '+r.name);
-    IB.toast('E / клік — крок угору • ESC — повернути назад');
+    IB.toast('E / клік — крок угору • ✖ ЗІЙТИ — повернутись');
   }
+
+  /* v1.4: ТУРИСТИЧНИЙ ШТАМП за пройдений маршрут — колекція на карті (TAB) */
+  function addStamp(r){
+    if(!r||!r.id)return;
+    IB.G.stamps=IB.G.stamps||{};
+    if(IB.G.stamps[r.id])return;
+    IB.G.stamps[r.id]={d:IB.G.day,name:r.name};
+    const n=Object.keys(IB.G.stamps).length;
+    IB.banner('НОВИЙ ШТАМП ✉ '+n+'/'+IB.W.ROUTES.length+': '+r.name);
+    IB.journalAdd('✉','Туристичний штамп «'+r.name+'» — у колекції. Дивись на карті (TAB).');
+    IB.toast('Штамп у колекції — карта (TAB)','gold');
+    IB.questCheck();
+  }
+
+  /* v1.4: КІНО-МОМЕНТ — пауза на вершині: панорама + віньєтка + полароїд-нагорода */
+  function startSummit(spot,r){
+    if(spot&&!IB.G.album.some(a=>a.spot===spot.id&&a.day===IB.G.day))IB.photoTaken(spot);
+    if(r&&r.id)addStamp(r);
+    if(!spot){IB.saveGame();return;}
+    IB.SUMMIT={t:0,spot:spot,route:r};
+    mode='summit';
+    IB.$('hud').classList.add('hidden');
+    IB.$('climb-abort').classList.add('hidden');
+  }
+  IB.SUMMIT_END=()=>{
+    if(!IB.SUMMIT)return;
+    IB.SUMMIT=null;mode='game';
+    IB.$('hud').classList.remove('hidden');
+    IB.saveGame();
+  };
 
   function climbStep(){
     const C=IB.TRAVEL_CUR;if(!C)return;
@@ -1165,7 +1240,9 @@ IB.MAIN=(function(){
   function finishTravel(){
     const C=IB.TRAVEL_CUR;if(!C)return;
     const r=C.route;
-    IB.TRAVEL_CUR=null;mode='game';
+    IB.TRAVEL_CUR=null;
+    IB.$('climb-abort').classList.add('hidden');
+    mode='game';
     IB.$('hud').classList.remove('hidden');
     IB.G.stats.trips=(IB.G.stats.trips||0)+1;
     IB.G.t+=r.hours*0.35;
@@ -1177,22 +1254,22 @@ IB.MAIN=(function(){
     IB.banner(r.name+' — МАРШРУТ ПРОЙДЕНО!');
     IB.journalAdd('🥾','Мандрівка «'+r.name+'»: група повернулась у «'+r.from+'». '+
       (r.kind==='peak'?'Вершина взята — фіо в альбомі!':''));
+    let spot=null;
     if(r.kind==='expedition'){
-      const spot=(IB.W.PHOTO_SPOTS||[]).find(s=>s.kind==='shatsk');
-      if(spot)IB.photoTaken(spot);
+      spot=(IB.W.PHOTO_SPOTS||[]).find(s=>s.kind==='shatsk')||null;
       for(const h of IB.E.team){h.mood=IB.clamp(h.mood+15,0,100);h.cold=0;}
       IB.toast('Світязь! Пісок, сосни, купання — Волинь дарує спокій','gold');
     }else{
-      const spot=(IB.W.PHOTO_SPOTS||[]).find(s=>s.x>0&&IB.dist(s.x,s.y,r.x,r.y)<6);
-      if(spot&&!IB.G.album.some(a=>a.spot===spot.id&&a.day===IB.G.day))IB.photoTaken(spot);
+      spot=(IB.W.PHOTO_SPOTS||[]).find(s=>s.x>0&&IB.dist(s.x,s.y,r.x,r.y)<6)||null;
     }
     if(r.kind==='peak'){
       const a=IB.ARTIFACTS.find(q=>q.world&&!q.hidden&&!IB.artHas(q.id)&&IB.dist(q.x,q.y,r.x,r.y)<14);
       if(a)IB.toast('На вершині щось БЛИСКАЄ серед каміння — пошукай (E)','gold');
     }
     for(const h of IB.E.team)h.mood=IB.clamp(h.mood+12,0,100);
-    IB.saveGame();
     IB.G.route=null;
+    /* v1.4: кіно-момент (полароїд + штамп) — потім збереження у SUMMIT_END */
+    startSummit(spot,r);
   }
 
   IB.TRAVEL_ABORT=()=>{
@@ -1200,6 +1277,7 @@ IB.MAIN=(function(){
     const r=C.route;
     IB.TRAVEL_CUR=null;mode='game';
     IB.$('hud').classList.remove('hidden');
+    IB.$('climb-abort').classList.add('hidden');
     IB.G.t+=r.hours*0.4*C.prog/100;
     if(IB.G.t>=24){IB.G.t-=24;IB.G.day++;}
     const campAt=n=>IB.W.CAMPS.find(c=>c.name===n);
@@ -1220,14 +1298,16 @@ IB.MAIN=(function(){
       entry:{x:def.w/2,y:def.h-1.5},hi:null};
     mode='interior';
     IB.$('prompt').classList.add('hidden');
+    IB.$('int-exit').classList.remove('hidden');
     IB.SFX.ui();
-    IB.toast(def.title+' — WASD рух • E — до об\'єктів • ESC — вийти');
+    IB.toast(def.title+' — WASD рух • E — до об\'єктів • ✖ ВИХІД — кнопка зверху');
   }
   function exitInterior(){
     if(!IB.INT_CUR)return;
     const b=IB.INT_CUR.b;
     IB.INT_CUR=null;IB._inInterior=false;
     mode='game';
+    IB.$('int-exit').classList.add('hidden');
     const d=b.door;
     IB.E.team.forEach((h,i)=>{h.x=d.x+0.5+(i-2)*0.7;h.y=d.y+1.2;h.tx=h.x;h.ty=h.y;h.target=null;h.fr=0;});
     IB.toast('Вийшли на вулицю');
@@ -1347,5 +1427,7 @@ IB.MAIN=(function(){
   }
   document.addEventListener('DOMContentLoaded',start);
   if(document.readyState==='loading'){}else start();
-  return {start,getMode:()=>mode,debug:{openPanel,closePanel,openGroupPanel,openJournal,openBag,openMap}};
+  return {start,getMode:()=>mode,debug:{openPanel,closePanel,openGroupPanel,openJournal,openBag,openMap,
+    openTravels:()=>openTravels(),climbStep:()=>climbStep(),finishTravel:()=>finishTravel(),
+    abort:()=>IB.TRAVEL_ABORT(),summitEnd:()=>IB.SUMMIT_END(),enterInt:(b)=>enterInterior(b),exitInt:()=>exitInterior()}};
 })();
